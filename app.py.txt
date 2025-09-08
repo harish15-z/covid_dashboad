@@ -1,0 +1,22 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset
+url = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
+df = pd.read_csv(url)
+df['date'] = pd.to_datetime(df['date'])
+
+covid = df[['location','date','total_cases','new_cases','total_deaths','new_deaths','total_vaccinations']].copy()
+covid.fillna(0, inplace=True)
+
+st.title("COVID-19 Data Analysis Dashboard")
+
+country = st.selectbox("Select Country", covid['location'].unique())
+data = covid[covid['location'] == country]
+
+st.subheader("Total Cases & Deaths")
+st.line_chart(data.set_index('date')[['total_cases','total_deaths']])
+
+st.subheader("Daily New Cases & Deaths")
+st.line_chart(data.set_index('date')[['new_cases','new_deaths']])
